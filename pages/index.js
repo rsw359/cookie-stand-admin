@@ -10,9 +10,9 @@ export default function Home() {
     e.preventDefault();
    let cookieStore = {
     Location: e.target.location.value,
-    minCustomers: e.target.minCustomers.value,
-    maxCustomers: e.target.maxCustomers.value,
-    avgCookies: e.target.avgCookies.value,
+    minCustomers: parseInt(e.target.minCustomers.value),
+    maxCustomers: parseInt(e.target.maxCustomers.value),
+    avgCookies: parseFloat(e.target.avgCookies.value),
  };
 
  setState(cookieStore);
