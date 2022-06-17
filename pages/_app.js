@@ -1,7 +1,15 @@
-import '../styles/globals.css'
+import 'tailwindcss/tailwind.css'
+import { AuthProvider } from '../contexts/auth';
+import Layout from '../components/layout';
 
 function MyApp({ Component, pageProps }) {
-  return <Component {...pageProps} />
+    return (
+        <AuthProvider>
+            <Layout>
+                <Component {...pageProps} />
+            </Layout>
+        </AuthProvider>
+    )
 }
 
 export default MyApp

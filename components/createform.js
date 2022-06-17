@@ -1,85 +1,74 @@
-import {hourlySales} from "../data"
-export default function InputForm(props) {
+import { useState } from 'react'
 
-  function totalDay(arr){
-    let total = 0 
-    arr.forEach(
-      number => total += number
-    )
-      return total
-  }
+export default function CookieStandForm({ onCreate }) {
 
-  function handleSubmit(e) {
-    e.preventDefault();
-
-    let cookieStore = {
-      id: location.length + 1,
-      hourlySales: hourlySales,
-      Location: e.target.location.value,
-      minCustomers: e.target.minCustomers.value,
-      maxCustomers: e.target.maxCustomers.value,
-      avgCookies: e.target.avgCookies.value,
+    const initialValues = {
+        location: '',
+        max: 0,
+        min: 0,
+        avg: 0,
     };
-    const totalDaySales = totalDay(cookieStore.hourlySales);
-    cookieStore.total = totalDaySales
-    props.inputHandler(cookieStore)
-    e.target.reset();
-  }
-  return (
-    <form onSubmit={handleSubmit} className='w-full max-w-screen-lg p-3 px-5 my-10 bg-green-200 rounded-md'>
 
-      <h1 className='flex justify-center py-3 text-2xl'>Create Cookie Stand</h1>
+    const [values, setValues] = useState(initialValues);
 
-      <div className='flex flex-wrap'>
-        <label className='pr-3'>Location</label>
-        <input id='location' className='flex-auto px-2' placeholder="Barcelona" required />
-      </div>
+    function submitHandler(event) {
+        event.preventDefault();
+        const reshapedData = reshapeData()
+        onCreate(reshapedData);
+        setValues(initialValues)
+    }
 
-      <div className='flex '>
+    /*
+    The api often requires a "reshaping" of the data to match.
+    */
+    function reshapeData() {
+        return {
+            location: values.location,
+            minimum_customers_per_hour: values.min,
+            maximum_customers_per_hour: values.max,
+            average_cookies_per_sale: values.avg,
+        }
+    }
 
-        <div className='mx-2 mt-6 text-center bg-green-300 rounded'>
-          <label>
-            Minimum Customers per Hour
-          </label>
-          <input
-            className='w-64 mx-2 my-2'
-            id='minCustomers'
+    function inputChangeHandler(event) {
+        let { name, value, type } = event.target;
 
-            placeholder='Minimum'
-            required
-          />
+        if (type === "number") {
+            value = parseFloat(value);
+        }
+
+        setValues({ ...values, [name]: value });
+    }
+    return (
+        <form className="grid items-center justify-center grid-cols-3 gap-4 p-8 mx-auto my-4 text-center bg-green-200 border-2 border-green-400 rounded-lg text-md gap-x-8" onSubmit={submitHandler}>
+            <div className="flex flex-col col-span-2 mb-4 ">
+                <label className="mb-2 font-bold uppercase text-grey-darkest" htmlFor="location">Add Location</label>
+                <input className="px-3 py-2 mx-8 border text-grey-darkest" type="text" name="location" id="location" value={values.location} onChange={inputChangeHandler} placeholder="Cookie Stand Location" />
+            </div>
+
+            <button className="p-4 uppercase bg-green-500 rounded text-green hover:bg-green-600" type="submit">Create Stand</button>
+
+
+            <FormInputSection>
+                <label className="mb-2 font-bold uppercase text-grey-darkest" htmlFor="min">Minimum Customers per Hour</label>
+                <input className="px-3 py-2 mx-8 border text-grey-darkest" type="number" name="min" id="min" value={values.min} onChange={inputChangeHandler} />
+            </FormInputSection>
+            <FormInputSection>
+                <label className="mb-2 font-bold uppercase text-grey-darkest" htmlFor="max">Maximum Customers per Hour</label>
+                <input className="px-3 py-2 mx-8 border text-grey-darkest" type="number" name="max" id="max" value={values.max} onChange={inputChangeHandler} />
+            </FormInputSection>
+            <FormInputSection>
+                <label className="mb-2 font-bold uppercase text-grey-darkest" htmlFor="avg">Average Cookies per Sale</label>
+                <input className="px-3 py-2 mx-8 border text-grey-darkest" type="number" name="avg" id="avg" value={values.avg} onChange={inputChangeHandler} />
+            </FormInputSection>
+        </form>
+    );
+}
+
+function FormInputSection({ children }) {
+    return (
+        <div className="flex flex-col justify-between">
+            {children}
         </div>
-
-        <div className='mx-2 mt-6 text-center bg-green-300 rounded'>
-          <label>
-            Maximum Customers per Hour
-          </label>
-          <input
-            className='w-64 mx-2 my-2'
-            id='maxCustomers'
-
-            placeholder='Maximum'
-            required
-          />
-        </div>
-
-        <div className='mx-2 mt-6 text-center bg-green-300 rounded'>
-          <label>
-            Average Cookies per Hour
-          </label>
-          <input
-            className='w-64 mx-2 my-2'
-            id='avgCookies'
-
-            placeholder='Average'
-            required
-          />
-
-        </div>
-        <button className='px-6 py-2 mt-4 ml-3 bg-green-300h-16 bg-emerald-500'>Create</button>
-
-      </div>
-    </form>
-  )
-
+    );
 }
